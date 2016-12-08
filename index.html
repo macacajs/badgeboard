@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+<title>badgeboard for Macaca</title>
+<base target="_blank"/>
+</head>
+<body>
+  <table id="table"></table>
+<script>
+var ajax = function(url, successCallback, failCallback) {
+  var request = new XMLHttpRequest();
+  request.open('GET', url, true);
+
+  request.onreadystatechange = function() {
+    if (this.readyState === 4) {
+
+      if (this.status >= 200 && this.status < 400) {
+        successCallback(this.responseText);
+      } else {
+        failCallback();
+      }
+    }
+  };
+
+  request.send();
+  request = null;
+};
+var table = document.querySelector('#table');
+ajax('//api.github.com/users/macaca-sample/repos', function(res) {
+  var data = JSON.parse(res);
+  data.forEach(function(item) {
+    if (!!~location.pathname.indexOf(item.name)) {
+      return;
+    }
+    var row = document.createElement('tr');
+    var line1 = document.createElement('td');
+    var name = document.createElement('a');
+    name.href = item.html_url;
+    name.innerText = item.name;
+    line1.appendChild(name);
+    row.appendChild(line1);
+
+    var line2 = document.createElement('td');
+    var badge = document.createElement('a');
+    badge.href = '//travis-ci.org/' + item.full_name;
+    badge.innerHTML = '<img src="//img.shields.io/travis/' + item.full_name + '.svg?style=flat-square" />';
+    line2.appendChild(badge);
+    row.appendChild(line2);
+    table.appendChild(row);
+  });
+});
+</script>
+</body>
+</html>
