@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-<title>badgeboard for Macaca</title>
+<title>badgeboard</title>
 <base target="_blank"/>
 </head>
 <body>
@@ -28,7 +28,9 @@ var ajax = function(url, successCallback, failCallback) {
   request = null;
 };
 var table = document.querySelector('#table');
-ajax('//api.github.com/users/macaca-sample/repos', function(res) {
+var group = location.host.split('.')[0];
+document.title = 'badgeboard for ' + group;
+ajax('//api.github.com/users/' + group + '/repos', function(res) {
   var data = JSON.parse(res);
   data.forEach(function(item) {
     if (!!~location.pathname.indexOf(item.name)) {
