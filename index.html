@@ -15,6 +15,8 @@
         <th>Repo</th>
         <th>Npm Version</th>
         <th>Build Status</th>
+        <th>Code Coverage (codecov)</th>
+        <th>Code Coverage (coveralls)</th>
       </tr>
     </thead>
     <tbody id="table"></tbody>
@@ -69,6 +71,20 @@
       badge2.innerHTML = '<img src="https://img.shields.io/travis/' + item.full_name + '.svg?style=flat-square" alt="build status"/>';
       line3.appendChild(badge2);
       row.appendChild(line3);
+
+      var line4 = document.createElement('td');
+      var badge3 = document.createElement('a');
+      badge3.href = 'https://codecov.io/gh/' + item.full_name;
+      badge3.innerHTML = '<img src="https://img.shields.io/codecov/c/github/' + item.full_name + '.svg?style=flat-square" alt="Codecov code coverage"/>';
+      line4.appendChild(badge3);
+      row.appendChild(line4);
+
+      var line5 = document.createElement('td');
+      var badge4 = document.createElement('a');
+      badge4.href = 'https://coveralls.io/r/' + item.full_name;
+      badge4.innerHTML = '<img src="https://img.shields.io/coveralls/' + item.full_name + '.svg?style=flat-square" alt="Coveralls code coverage"/>';
+      line5.appendChild(badge4);
+      row.appendChild(line5);
 
       table.appendChild(row);
     });
