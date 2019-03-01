@@ -1,58 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-<title>badgeboard</title>
-<base target="_blank"/>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <title>badgeboard</title>
+  <link rel="stylesheet" href="styles.css" type="text/css">
+  <base target="_blank" />
 </head>
+
 <body>
-  <table id="table"></table>
-<script>
-var ajax = function(url, successCallback, failCallback) {
-  var request = new XMLHttpRequest();
-  request.open('GET', url, true);
+  <table>
+    <thead>
+      <tr>
+        <th>Repo</th>
+        <th>Npm Version</th>
+        <th>Build Status</th>
+      </tr>
+    </thead>
+    <tbody id="table"></tbody>
+  </table>
+  <script>
+  var ajax = function(url, successCallback) {
+    var request = new XMLHttpRequest();
+    request.open('GET', url, true);
 
-  request.onreadystatechange = function() {
-    if (this.readyState === 4) {
-
-      if (this.status >= 200 && this.status < 400) {
-        successCallback(this.responseText);
-      } else {
-        failCallback();
+    request.onreadystatechange = function() {
+      if (this.readyState === 4) {
+        if (this.status >= 200 && this.status < 400) {
+          successCallback(this.responseText);
+        }
       }
-    }
+    };
+
+    request.send();
+    request = null;
   };
+  var table = document.querySelector('#table');
+  // var group = 'macacajs';
+  var group = location.host.split('.')[0];
+  document.title = 'badgeboard for ' + group;
+  ajax('//api.github.com/users/' + group + '/repos', function(res) {
+    var data = JSON.parse(res);
+    data = data.sort((a, b) => {
+      return a.name > b.name ? 1 : 0;
+    })
+    data.forEach(function(item) {
+      if (!!~location.pathname.indexOf(item.name)) {
+        return;
+      }
+      var row = document.createElement('tr');
+      var line1 = document.createElement('td');
+      var name = document.createElement('a');
+      name.href = item.html_url;
+      name.innerText = item.name;
+      line1.appendChild(name);
+      row.appendChild(line1);
 
-  request.send();
-  request = null;
-};
-var table = document.querySelector('#table');
-var group = location.host.split('.')[0];
-document.title = 'badgeboard for ' + group;
-ajax('//api.github.com/users/' + group + '/repos', function(res) {
-  var data = JSON.parse(res);
-  data.forEach(function(item) {
-    if (!!~location.pathname.indexOf(item.name)) {
-      return;
-    }
-    var row = document.createElement('tr');
-    var line1 = document.createElement('td');
-    var name = document.createElement('a');
-    name.href = item.html_url;
-    name.innerText = item.name;
-    line1.appendChild(name);
-    row.appendChild(line1);
+      var line2 = document.createElement('td');
+      var badge = document.createElement('a');
+      badge.href = 'https://npmjs.org/package/' + item.name;
+      badge.innerHTML = '<img src="https://img.shields.io/npm/v/' + item.name + '.svg?style=flat-square" alt="NPM version"/>';
+      line2.appendChild(badge);
+      row.appendChild(line2);
 
-    var line2 = document.createElement('td');
-    var badge = document.createElement('a');
-    badge.href = '//travis-ci.org/' + item.full_name;
-    badge.innerHTML = '<img src="//img.shields.io/travis/' + item.full_name + '.svg?style=flat-square" />';
-    line2.appendChild(badge);
-    row.appendChild(line2);
-    table.appendChild(row);
+      var line3 = document.createElement('td');
+      var badge2 = document.createElement('a');
+      badge2.href = 'https://travis-ci.org/' + item.full_name;
+      badge2.innerHTML = '<img src="https://img.shields.io/travis/' + item.full_name + '.svg?style=flat-square" alt="build status"/>';
+      line3.appendChild(badge2);
+      row.appendChild(line3);
+
+      table.appendChild(row);
+    });
   });
-});
-</script>
+  </script>
 </body>
+
 </html>
